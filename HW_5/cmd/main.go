@@ -29,6 +29,11 @@ func main() {
 	// Init Storage
 	store := storage.NewStorage(conn)
 
+	// Init Storage
+	//store := storage.NewStorage(conn)
+
+	// Migration logic removed for manual DB management
+
 	// Init Auth Components
 	authUsecase := usecase.NewAuthUsecase(store)
 	authHandler := handler.NewAuthHandler(authUsecase)
@@ -49,13 +54,17 @@ func main() {
 	userGroup.Use(middleware.JWTMiddleware)
 	userGroup.GET("/me", authHandler.GetMe)
 
-	
 	e.GET("/student/:id", h.GetStudent)
 	e.GET("/all_class_schedule", h.GetAllSchedule)
 	e.GET("/schedule/group/:id", h.GetGroupSchedule)
 	e.POST("/attendance/subject", h.MarkAttendance)
 	e.GET("/attendanceBySubjectId/:id", h.GetAttendanceBySubjectId)
 	e.GET("/attendanceByStudentId/:id", h.GetAttendanceByStudentId)
+
+	// Health check for Render
+	e.GET("/health", func(c echo.Context) error {
+		return c.String(200, "OK")
+	})
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
